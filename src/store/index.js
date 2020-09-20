@@ -8,7 +8,8 @@ export default new Vuex.Store({
   state: {
     status: '',
     token: localStorage.getItem('token') || '',
-    user : {}
+    user : {},
+    catalogue: [],
   },
   mutations: {
     auth_request(state){
@@ -26,6 +27,9 @@ export default new Vuex.Store({
       state.status = ''
       state.token = ''
     },
+    catalogue_success(state, cat){
+      Vue.set(state, 'catalogue', [...cat]);
+    }
   },
   actions: {
     login({commit}, user){
@@ -64,11 +68,22 @@ export default new Vuex.Store({
       })
     })
   },
+  getCatalogue({commit}){
+    axios.get('http://localhost:8001/catalogue')
+    .then(resp => {
+      console.log('resp-->', resp);
+      const catalogue = resp.data;
+      commit('catalogue_success', catalogue);
+    }).catch(err => {
+      console.log(err);
+    })
+  }
   },
   modules: {
   },
   getters: {
     isLoggedIn: state => !!state.token,
-  authStatus: state => state.status,
+    authStatus: state => state.status,
+    catalogue: state => state.catalogue,
   }
 })
