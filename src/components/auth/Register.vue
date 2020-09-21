@@ -1,44 +1,22 @@
 <template>
   <v-app id="inspire">
-      
     <v-main>
-      <v-container
-        class="fill-height"
-        fluid
-      >
-        <v-row
-          align="center"
-          justify="center"
-        >
-          <v-col
-            cols="12"
-            sm="8"
-            md="4"
-          >
+      <v-container class="fill-height" fluid>
+        <v-row align="center" justify="center">
+          <v-col cols="12" sm="8" md="4">
             <v-card class="elevation-12">
-              <v-toolbar
-                color="primary"
-                dark
-                flat
-              >
+              <v-toolbar color="primary" dark flat>
                 <v-toolbar-title>Please signup to continue...</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
-                    <v-btn
-                      :href="source"
-                      icon
-                      large
-                      target="_blank"
-                      v-on="on"
-                    >
-                      
-                    </v-btn>
+                    <v-btn :href="source" icon large target="_blank" v-on="on"></v-btn>
                   </template>
                   <span>Source</span>
                 </v-tooltip>
               </v-toolbar>
               <v-card-text>
+                <v-alert v-if="error" type="error">{{ errMsg }}</v-alert>
                 <v-form>
                   <v-text-field
                     label="Login"
@@ -80,32 +58,34 @@
 </template>
 
 <script>
-
 export default {
-    name: "Register",
-    data: function () {
-        return {
-            username: "",
-            password: "",
-            cpassword: "",
-            error: false,
-        }
+  name: "Register",
+  data: function () {
+    return {
+      username: "",
+      password: "",
+      cpassword: "",
+      error: false,
+    };
+  },
+  methods: {
+    signup: function () {
+      let data = {
+        email: this.username,
+        password: this.password,
+        cpassword: this.cpassword,
+      };
+      this.$store
+        .dispatch("register", data)
+        .then(() => this.$router.push("/catalogue"))
+        .catch((err) => {
+          this.error = true,
+          this.errMsg = err
+        });
     },
-    methods: {
-       signup : function() {
-        let data = {
-          "email": this.username,
-          "password": this.password,
-          "cpassword": this.cpassword
-        }
-        this.$store.dispatch('register', data)
-       .then(() => this.$router.push('/catalogue'))
-       .catch(err => console.log(err))
-      }
-    }
-}
+  },
+};
 </script>
 
 <style>
-
 </style>
